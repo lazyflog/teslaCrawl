@@ -1,0 +1,28 @@
+{
+  "name": "teslacrawl",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lazyflog/teslaCrawl.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lazyflog/teslaCrawl/issues"
+  },
+  "homepage": "https://github.com/lazyflog/teslaCrawl#readme",
+  "dependencies": {
+    "@types/selenium-webdriver": "4.0.16",
+    "selenium-webdriver": "4.1.0",
+    "ts-node": "10.4.0"
+  },
+  "type": "module",
+  "devDependencies": {
+    "typescript": "4.5.4"
+  }
+}
