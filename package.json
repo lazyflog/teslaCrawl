@@ -21,7 +21,6 @@
     "selenium-webdriver": "4.1.0",
     "ts-node": "10.4.0"
   },
-  "type": "module",
   "devDependencies": {
     "typescript": "4.5.4"
   }
