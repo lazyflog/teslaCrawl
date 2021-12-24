@@ -6,47 +6,42 @@ const teslaImageCrawl = async () => {
   let driver = await new Builder().forBrowser("chrome").build();
   const modelName = ["models", "model3", "modelx", "modely"];
   const carColor = ["PearlWhite", "SolidBlack", "MidnightSilver", "DeepBlue", "Red"];
-  for (var model = 0; model < modelName.length; model++) {
+  for (var model = 0; model < 4; model++) {
     await driver.get(`https://www.tesla.com/ko_kr/${modelName[model]}/design#overview`);
-    await driver.wait(until.elementsLocated(By.className("tds-text--caption")), 10000);
+    await driver.sleep(2000);
     let getImage = await driver.findElements(By.css("image"));
-    for (var c = 1; c < 6; c++) {
-      var findPaint = await driver.findElements(By.css("div"));
-      for (var p = 0; p < findPaint.length; p++) {
-        var getPain = await findPaint[p].getAttribute("data-group-id");
+    var findDiv = await driver.findElements(By.css("div"));
+    var paintClick = [];
+    var wheelClick = [];
+    for (var p = 0; p < findDiv.length; p++) {
+      var getPaint = await findDiv[p].getAttribute("data-group-id");
+      if (getPaint == "PAINT") {
+        var aa = await findDiv[p].findElements(By.xpath(`./fieldset/div[1]/div//div`));
+        paintClick.push(aa);
+      } else if (getPaint == "WHEELS") {
+        var bb = await findDiv[p].findElements(By.xpath(`./fieldset/div[1]/div//div`));
+        wheelClick.push(bb);
       }
-      await driver.wait(until.elementsLocated(By.xpath(`//*[@id="root"]/div[2]/main/section/div[2]/div[1]/div[2]/div/fieldset/div[1]/div/div[${c}]`)), 10000);
-      let colors = await driver.findElement(By.xpath(`//*[@id="root"]/div[2]/main/section/div[2]/div[1]/div[2]/div/fieldset/div[1]/div/div[${c}]`));
-      await colors.click();
-      await driver.sleep(1000);
-
-      // 휠 선택
-      for (var w = 1; w < 3; w++) {
-        var findWheel1 = await driver.findElements(By.css("div"));
-        for (var fw = 0; fw < findWheel1.length; fw++) {
-          var findWheel2 = await findWheel1[fw].getAttribute("data-group-id");
-          // console.log(findWheel2);
-          if (findWheel2 == "WHEELS") {
-            var wheelImage = await findWheel1[fw].findElement(By.xpath(`./fieldset/div[1]/div/div[${w}]`));
-            await wheelImage.click();
-          }
-        }
-        // 휠 크기
-        var wheelInch = await driver.findElement(By.xpath('//*[@id="root"]/div[2]/main/section/div[2]/div[1]/div[3]/div/fieldset/div[2]/div/div[1]/p/span'));
-        var getInch = (await wheelInch.getText()).split("인치")[0];
-        await driver.sleep(1000);
+      if (paintClick.length > 0 && wheelClick.length > 0) {
+        break;
+      }
+    }
+    for (var paint = 0; paint < 5; paint++) {
+      await paintClick[0][paint].click();
+      for (var wheel = 0; wheel < 2; wheel++) {
+        await wheelClick[0][wheel].click();
+        var wheelName = await wheelClick[0][wheel].findElement(By.xpath("./input")).getAttribute("aria-label");
         // 차량 이미지
         var count = 0;
         for (var i = 0; i < getImage.length; i++) {
           var href = await getImage[i].getAttribute("xlink:href");
           if (href.includes("https://static-assets.tesla.com/configurator/compositor") && count === 0) {
-            console.log(modelName[model] + carColor[c - 1] + "wheel" + getInch + ": " + href);
+            console.log(modelName[model] + carColor[paint] + "wheel" + wheelName.split(" ")[0].replace(/\인치/gi, "") + ": " + href);
             count = 1;
           }
         }
       }
     }
-    await driver.sleep(2000);
   }
   await driver.quit();
 };
